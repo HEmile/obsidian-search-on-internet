@@ -16,10 +16,10 @@ export default class SearchOnInternetPlugin extends Plugin {
 
       this.fileMenuEvent=this.app.workspace.on('file-menu', (menu, file: TFile) => {
         const fileTags = this.app.metadataCache.getFileCache(file)
-            ?.tags.map((t) => t.tag);
+            ?.tags?.map((t) => t.tag);
         this.settings.searches.forEach((search) => {
-          if (fileTags === null || search.tags.length === 0 ||
-              fileTags.some((t) => search.tags.contains(t))) {
+          if (search.tags.length === 0 ||
+              fileTags?.some((t) => search.tags.contains(t))) {
             menu.addItem((item) => {
               item.setTitle(`Search ${search.name}`).setIcon('search')
                   .onClick((evt) => {

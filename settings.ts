@@ -108,7 +108,7 @@ export class SOISettingTab extends PluginSettingTab {
                 }
               });
         }).setName('Tags')
-            .setDesc('Only add search to notes with these comma-separated tags.');
+            .setDesc('Only add search to notes with these comma-separated tags. Leave empty to use all tags.');
       });
 
       const div = containerEl.createEl('div');
