@@ -14,7 +14,10 @@ export default class SearchOnInternetPlugin extends Plugin {
 
       this.addSettingTab(new SOISettingTab(this.app, this));
 
-      this.fileMenuEvent=this.app.workspace.on('file-menu', (menu, file: TFile) => {
+      this.fileMenuEvent=this.app.workspace.on('file-menu', (menu, file: TFile, source:string) => {
+        if (file === null) {
+          return;
+        }
         const fileTags = this.app.metadataCache.getFileCache(file)
             ?.tags?.map((t) => t.tag);
         this.settings.searches.forEach((search) => {

@@ -103,7 +103,6 @@ export class SOISettingTab extends PluginSettingTab {
                 const index = plugin.settings.searches.indexOf(search);
                 if (index > -1) {
                   search.tags = parseTags(newValue);
-                  console.log(search.tags);
                   plugin.saveSettings();
                 }
               });
