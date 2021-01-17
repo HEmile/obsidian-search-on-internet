@@ -1,13 +1,13 @@
 ## Search on Internet
 Adds option to the file context menu to search the title of the note on external websites, like Google and Wikipedia. 
 
-![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/main/resources/demo.gif)
+![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/demo.gif)
 
 ### Settings
 By default, the plugin comes with searches on Google and Wikipedia. 
 You can add your own websites to search on in the settings. 
 
-![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/main/resources/img.png)
+![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/img.png)
 
 For each website, fill in the following three fields:
 - Name: The name of the search. This will be displayed in the context menu.
