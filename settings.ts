@@ -23,6 +23,12 @@ export const DEFAULT_SETTING: SOISettings = {
   } as SearchSetting],
 };
 
+const parseTags = function(inputs: string): string[] {
+  return inputs.split(',')
+      .map((s) => s.trim())
+      .filter((s) => /^#([A-Za-z])\w+$/.test(s));
+};
+
 
 export class SOISettingTab extends PluginSettingTab {
     plugin: SearchOnInternetPlugin;
@@ -81,8 +87,6 @@ export class SOISettingTab extends PluginSettingTab {
                   .setValue(search.query)
                   .onChange((newQuery) => {
                     const index = plugin.settings.searches.indexOf(search);
-                    console.log(plugin.settings);
-                    console.log(index);
                     if (index > -1) {
                       search.query = newQuery;
                       plugin.saveSettings();
@@ -98,8 +102,8 @@ export class SOISettingTab extends PluginSettingTab {
               .onChange((newValue) => {
                 const index = plugin.settings.searches.indexOf(search);
                 if (index > -1) {
-                  search.tags = newValue.split(',')
-                      .map((s) => s.trim());
+                  search.tags = parseTags(newValue);
+                  console.log(search.tags);
                   plugin.saveSettings();
                 }
               });

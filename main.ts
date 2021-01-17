@@ -18,7 +18,12 @@ export default class SearchOnInternetPlugin extends Plugin {
     }
 
     async loadSettings() {
-      this.settings = Object.assign(DEFAULT_SETTING, await this.loadData());
+      const loadedSettings = await this.loadData() as any;
+      if (loadedSettings && loadedSettings.hasOwnProperty('searches')) {
+        this.settings = loadedSettings;
+      } else {
+        this.settings = DEFAULT_SETTING;
+      }
     }
 
     async saveSettings() {
