@@ -9,7 +9,7 @@ export default {
     dir: '.',
     sourcemap: 'inline',
     format: 'cjs',
-    exports: 'default'
+    exports: 'default',
   },
   external: ['obsidian'],
   plugins: [
@@ -20,8 +20,9 @@ export default {
       targets: [
         {src: 'main.js', dest: '../semantic-obsidian/Semantic Obsidian/.obsidian/plugins/search-on-internet'},
         {src: 'manifest.json', dest: '../semantic-obsidian/Semantic Obsidian/.obsidian/plugins/search-on-internet'},
+        {src: 'styles.css', dest: '../semantic-obsidian/Semantic Obsidian/.obsidian/plugins/search-on-internet'},
       ],
       hook: 'writeBundle',
     }),
-  ]
+  ],
 };
