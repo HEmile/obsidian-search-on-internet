@@ -28,5 +28,8 @@
     "rollup-plugin-copy": "^3.3.0",
     "tslib": "^2.0.3",
     "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "open": "^7.3.1"
   }
 }

@@ -18,7 +18,7 @@ export const DEFAULT_SETTING: SOISettings = {
     name: 'Google',
   } as SearchSetting, {
     tags: [] as string[],
-    query: 'https://en.wikipedia.org/wiki/{{title}}',
+    query: 'https://en.wikipedia.org/wiki/Special:Search/{{title}}',
     name: 'Wikipedia',
   } as SearchSetting],
 };
@@ -109,10 +109,6 @@ export class SOISettingTab extends PluginSettingTab {
               });
         }).setName('Tags')
             .setDesc('Only add search to notes with these comma-separated tags.');
-
-        // setting.infoEl.remove();
-
-        // div.appendChild(containerEl.lastChild);
       });
 
       const div = containerEl.createEl('div');
