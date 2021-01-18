@@ -1,6 +1,7 @@
-import {EventRef, Plugin, TFile} from 'obsidian';
+import {EventRef, MarkdownPreviewView, MarkdownView, Plugin, TFile} from 'obsidian';
 import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting} from './settings';
 import open from 'open';
+import {SearchModal} from './modal';
 
 
 export default class SearchOnInternetPlugin extends Plugin {
@@ -32,6 +33,45 @@ export default class SearchOnInternetPlugin extends Plugin {
               }
             });
           }));
+
+      this.addCommand({
+        id: 'search-on-internet',
+        name: 'Perform search',
+        callback: () => {
+          let query = null;
+          const wSelection = window.getSelection();
+          const docSelection = document?.getSelection();
+          if (wSelection) {
+            query = wSelection.toString();
+          } else if (document && docSelection.type != 'Control') {
+            query = docSelection.toString();
+          }
+          if (query === null || query === '') {
+            const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (activeView == null) {
+              return;
+            }
+            query = activeView.getDisplayText();
+          }
+          const modal = new SearchModal(plugin.app, plugin, query);
+          modal.open();
+        },
+      });
+
+
+      // Changing the context menu is a bit problematic:
+      // Obsidian sometimes uses its own context menu, eg when right-clicking
+      // on internal link. But other times, it's a context menu that
+      // cannot really be edited easily. It would be nice if Obsidian
+      // provided its own context menu everywhere to hook into.
+      // this.registerCodeMirror((cm) => {
+      //   // @ts-ignore
+      //   cm.resetSelectionOnContextMenu=false;
+      //   cm.on('contextmenu', (editor, event)=>{
+      //     console.log(editor);
+      //     console.log(event);
+      //   });
+      // });
     }
 
     openSearch(search: SearchSetting, query: string) {
@@ -58,19 +98,4 @@ export default class SearchOnInternetPlugin extends Plugin {
     }
 }
 
-// class SampleModal extends Modal {
-//   constructor(app: App) {
-//     super(app);
-//   }
-//
-//   onOpen() {
-//     const {contentEl} = this;
-//     contentEl.setText('Woah!');
-//   }
-//
-//   onClose() {
-//     const {contentEl} = this;
-//     contentEl.empty();
-//   }
-// }
-//
+
