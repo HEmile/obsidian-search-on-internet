@@ -3,6 +3,11 @@ Adds option to the file context menu to search the title of the note on external
 
 ![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/demo.gif)
 
+You can also right-click on an internal link to perform search on that link:
+
+![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/internal_link.png)
+
+
 ### Settings
 By default, the plugin comes with searches on Google and Wikipedia. 
 You can add your own websites to search on in the settings. 
