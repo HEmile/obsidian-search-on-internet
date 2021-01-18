@@ -1,11 +1,10 @@
 import {EventRef, Plugin, TFile} from 'obsidian';
-import {SOISettingTab, SOISettings, DEFAULT_SETTING} from './settings';
+import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting} from './settings';
 import open from 'open';
 
 
 export default class SearchOnInternetPlugin extends Plugin {
     settings: SOISettings;
-    fileMenuEvent: EventRef;
 
     async onload() {
       console.log('loading search-on-internet');
@@ -13,32 +12,36 @@ export default class SearchOnInternetPlugin extends Plugin {
       await this.loadSettings();
 
       this.addSettingTab(new SOISettingTab(this.app, this));
-
-      this.fileMenuEvent=this.app.workspace.on('file-menu', (menu, file: TFile, source:string) => {
-        if (file === null) {
-          return;
-        }
-        const fileTags = this.app.metadataCache.getFileCache(file)
-            ?.tags?.map((t) => t.tag);
-        this.settings.searches.forEach((search) => {
-          if (search.tags.length === 0 ||
+      const plugin = this;
+      this.registerEvent(
+          this.app.workspace.on('file-menu', (menu, file: TFile, source:string) => {
+            if (file === null) {
+              return;
+            }
+            const fileTags = this.app.metadataCache.getFileCache(file)
+                ?.tags?.map((t) => t.tag);
+            this.settings.searches.forEach((search) => {
+              if (search.tags.length === 0 ||
               fileTags?.some((t) => search.tags.contains(t))) {
-            menu.addItem((item) => {
-              item.setTitle(`Search ${search.name}`).setIcon('search')
-                  .onClick((evt) => {
-                    const url = search.query.replace('{{title}}', encodeURIComponent(file.basename));
-                    console.log(`SOI: Opening URL ${url}`);
-                    open(url);
-                  });
+                menu.addItem((item) => {
+                  item.setTitle(`Search ${search.name}`).setIcon('search')
+                      .onClick((evt) => {
+                        plugin.openSearch(search, file.basename);
+                      });
+                });
+              }
             });
-          }
-        });
-      });
+          }));
+    }
+
+    openSearch(search: SearchSetting, query: string) {
+      const url = search.query.replace('{{title}}', encodeURIComponent(query));
+      console.log(`SOI: Opening URL ${url}`);
+      open(url);
     }
 
     onunload() {
       console.log('unloading search-on-internet');
-      this.app.workspace.offref(this.fileMenuEvent);
     }
 
     async loadSettings() {
