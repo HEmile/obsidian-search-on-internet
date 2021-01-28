@@ -2,6 +2,7 @@ import {EventRef, MarkdownPreviewView, MarkdownView, Plugin, TFile} from 'obsidi
 import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting} from './settings';
 import open from 'open';
 import {SearchModal} from './modal';
+import {SearchView} from './view';
 
 
 export default class SearchOnInternetPlugin extends Plugin {
@@ -74,10 +75,17 @@ export default class SearchOnInternetPlugin extends Plugin {
       // });
     }
 
-    openSearch(search: SearchSetting, query: string) {
+    async openSearch(search: SearchSetting, query: string) {
       const url = search.query.replace('{{title}}', encodeURIComponent(query));
       console.log(`SOI: Opening URL ${url}`);
-      open(url);
+      if (this.settings.useIframe) {
+        const leaf = this.app.workspace.getLeaf(true);
+        // const leaf = this.app.workspace.splitActiveLeaf(this.settings.splitDirection);
+        const view = new SearchView(leaf, query, search.name, url);
+        await leaf.open(view);
+      } else {
+        await open(url);
+      }
     }
 
     onunload() {

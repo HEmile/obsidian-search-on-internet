@@ -9,6 +9,7 @@ export interface SearchSetting {
 
 export interface SOISettings {
     searches: SearchSetting[];
+    useIframe: boolean;
 }
 
 export const DEFAULT_SETTING: SOISettings = {
@@ -21,6 +22,7 @@ export const DEFAULT_SETTING: SOISettings = {
     query: 'https://en.wikipedia.org/wiki/Special:Search/{{title}}',
     name: 'Wikipedia',
   } as SearchSetting],
+  useIframe: true,
 };
 
 const parseTags = function(inputs: string): string[] {
@@ -45,15 +47,23 @@ export class SOISettingTab extends PluginSettingTab {
 
       const plugin = this.plugin;
 
+      new Setting(containerEl)
+          .setName('Open in iframe')
+          .setDesc('If set to true, this will open your searches in an iframe within Obsidian. ' +
+                'Otherwise, it will open in your default browser.')
+          .addToggle((toggle) => {
+            toggle.setValue(this.plugin.settings.useIframe)
+                .onChange((new_value) => {
+                  this.plugin.settings.useIframe = new_value;
+                  this.plugin.saveData(this.plugin.settings);
+                });
+          });
+
       // Code mostly taken from https://github.com/SilentVoid13/Templater/blob/master/src/settings.ts
       plugin.settings.searches.forEach((search) => {
         const div = containerEl.createEl('div');
         div.addClass('soi_div');
 
-        // const title = containerEl.createEl('h4', {
-        //   text: search.name,
-        // });
-        // div.appendChild(title);
         new Setting(div)//
             .addExtraButton((extra) => {
               extra.setIcon('cross')
