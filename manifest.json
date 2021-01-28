@@ -1,7 +1,7 @@
 {
 	"id": "search-on-internet",
 	"name": "Search on Internet",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"minAppVersion": "0.9.12",
 	"description": "Add context menu items to search the internet based on the title of your note.",
 	"author": "Emile",

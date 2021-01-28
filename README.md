@@ -16,11 +16,13 @@
 
 
 ## Search on Internet
-Adds the option to search selected text on external websites, like Google and Wikipedia. You can add your own websites! 
+Adds the option to search selected text on external websites, like Google and Wikipedia. 
+The search opens in an iframe in Obsidian. You can add your own websites! 
 
-![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/modal_demo.gif)
+![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/context_iframe.gif)
 
-It also adds the search options to the file context menu to search based on the title of a note:
+It also adds the search options to the file context menu to search based on the title of a note. 
+And you can choose to open searches in your default browser instead of Obsidian.
 
 ![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/demo.gif)
 
@@ -41,9 +43,7 @@ For each website, fill in the following three fields:
 - Tags (optional): A list of tags for notes to display the search option on. 
   In the example screenshot, this is used to only add the IMDB search on notes tagged with `#actor`, `#movie` or `#director` (in Dutch!)
   
-It's recommended to assign the command: "Search on Internet: Perform search" to a hotkey:
-
-![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/hotkey.png)
+You can also disable the iframe search and open the search in your browser. 
   
 
 ### Credits
