@@ -1,3 +1,20 @@
+
+<p align="left">
+    <a href="https://github.com/HEmile/obsidian-search-on-internet/releases">
+        <img src="https://img.shields.io/github/downloads/HEmile/obsidian-search-on-internet/total.svg"
+            alt="Downloads" width="110"></a> 
+    <a href="https://github.com/HEmile/obsidian-search-on-internet/releases">
+        <img src="https://img.shields.io/github/v/release/HEmile/obsidian-search-on-internet"
+            alt="Github latest release" width="100"></a>
+   <a href="https://publish.obsidian.md/semantic-obsidian/Search+on+Internet+Plugin">
+        <img src="https://img.shields.io/badge/docs-Obsidian-blue"
+            alt="Documentation" width="100"></a>
+    <a href="https://discord.gg/sAmSGpaPgM">
+        <img src="https://img.shields.io/discord/794500624163143720?logo=discord"
+            alt="chat on Discord" width="120"></a>
+</p>
+
+
 ## Search on Internet
 Adds the option to search selected text on external websites, like Google and Wikipedia. You can add your own websites! 
 
