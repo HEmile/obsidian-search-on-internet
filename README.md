@@ -41,7 +41,7 @@ You can add your own websites to search on in the settings.
 
 For each website, fill in the following three fields:
 - Name: The name of the search. This will be displayed in the search bar and the context menu.
-- URL: The URL to open. `{{title}}` will be replaced by the current notes title. This is used as the 'query'.
+- URL: The URL to open. `{{title}}` will be replaced by the current notes title. This is used as the 'query'. Note in this context, `{{title}}` can also refer to user selected text in the Obsidian editor.
 - Tags (optional): A list of tags for notes to display the search option on. 
   In the example screenshot, this is used to only add the IMDB search on notes tagged with `#actor`, `#movie` or `#director` (in Dutch!)
   
