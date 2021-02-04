@@ -32,6 +32,8 @@ You can also right-click on an internal link to perform a search on that link:
 
 
 ### Settings
+Note: You need to have the latest Obsidian v0.10.11 installed for this plugin to work!
+
 By default, the plugin comes with searches on Google and Wikipedia. 
 You can add your own websites to search on in the settings. 
 
