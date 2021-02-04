@@ -15,11 +15,11 @@ export interface SOISettings {
 export const DEFAULT_SETTING: SOISettings = {
   searches: [{
     tags: [] as string[],
-    query: 'https://www.google.com/search?&q={{title}}',
+    query: 'https://www.google.com/search?&q={{query}}',
     name: 'Google',
   } as SearchSetting, {
     tags: [] as string[],
-    query: 'https://en.wikipedia.org/wiki/Special:Search/{{title}}',
+    query: 'https://en.wikipedia.org/wiki/Special:Search/{{query}}',
     name: 'Wikipedia',
   } as SearchSetting],
   useIframe: true,
@@ -105,7 +105,8 @@ export class SOISettingTab extends PluginSettingTab {
               t.inputEl.setAttr('rows', 2);
               return t;//
             }).setName('URL')
-            .setDesc('URL to open when executing the search. Use {{title}} to refer to the title of the note.');
+            .setDesc('URL to open when executing the search. ' +
+                'Use {{query}} to refer to the query, which is either the selected text, or the title of a note.');
         new Setting(div).addText((text) => {
           return text.setPlaceholder('')
               .setValue(search.tags.join(', '))
