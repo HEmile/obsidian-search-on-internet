@@ -5,7 +5,7 @@ export interface SearchSetting {
     tags: string[];
     query: string;
     name: string;
-    encode:boolean;
+    encode: boolean;
 }
 
 export interface SOISettings {
@@ -13,17 +13,24 @@ export interface SOISettings {
     useIframe: boolean;
 }
 
+export const DEFAULT_QUERY: SearchSetting = {
+  tags: [],
+  query: '{{query}}',
+  name: '',
+  encode: true,
+};
+
 export const DEFAULT_SETTING: SOISettings = {
   searches: [{
     tags: [] as string[],
     query: 'https://www.google.com/search?&q={{query}}',
     name: 'Google',
-    encode: true
+    encode: true,
   } as SearchSetting, {
     tags: [] as string[],
     query: 'https://en.wikipedia.org/wiki/Special:Search/{{query}}',
     name: 'Wikipedia',
-    encode: true
+    encode: true,
   } as SearchSetting],
   useIframe: true,
 };
@@ -94,17 +101,17 @@ export class SOISettingTab extends PluginSettingTab {
                   });
             }).setName('Name')
             .setDesc('Name of the search. Click the cross to delete the search.');
-            new Setting(div)
+
+        new Setting(div)
             .setName('Encode')
-            .setDesc('If set to true, this will encode searches. ' +
-                  'Otherwise, it will not encode it.')
+            .setDesc('If set to true, this will encode raw text to be used in URLs. ' +
+                  'Otherwise, it will not encode your query.')
             .addToggle((toggle) => {
-             
               toggle.setValue(search.encode)
-                  .onChange((new_value) => {
+                  .onChange((newValue) => {
                     const index = plugin.settings.searches.indexOf(search);
                     if (index > -1) {
-                      search.encode = new_value;
+                      search.encode = newValue;
                       plugin.saveSettings();
                     }
                   });
@@ -137,7 +144,6 @@ export class SOISettingTab extends PluginSettingTab {
               });
         }).setName('Tags')
             .setDesc('Only add search to notes with these comma-separated tags. Leave empty to use all tags.');
-    
       });
 
       const div = containerEl.createEl('div');
@@ -150,6 +156,7 @@ export class SOISettingTab extends PluginSettingTab {
                 name: '',
                 query: '',
                 tags: [],
+                encode: true,
               } as SearchSetting);
               // Force refresh
               this.display();

@@ -17,3 +17,7 @@
 .soi_div > .setting-item > .setting-item-control > .setting-editor-extra-setting-button {
     align-self: center;
 }
+
+.soi-file-menu {
+    z-index: 50;
+}
