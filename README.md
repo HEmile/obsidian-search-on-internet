@@ -30,6 +30,9 @@ You can also right-click on an internal link to perform a search on that link:
 
 ![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/internal_link.png)
 
+And similar for external links:
+
+![](https://raw.githubusercontent.com/HEmile/obsidian-search-on-internet/master/resources/external_link.png)
 
 ### Settings
 Note: You need to have the latest Obsidian v0.10.11 installed for this plugin to work!
