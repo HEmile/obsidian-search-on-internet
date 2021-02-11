@@ -5,6 +5,7 @@ export interface SearchSetting {
     tags: string[];
     query: string;
     name: string;
+    encode:boolean;
 }
 
 export interface SOISettings {
@@ -17,10 +18,12 @@ export const DEFAULT_SETTING: SOISettings = {
     tags: [] as string[],
     query: 'https://www.google.com/search?&q={{query}}',
     name: 'Google',
+    encode: true
   } as SearchSetting, {
     tags: [] as string[],
     query: 'https://en.wikipedia.org/wiki/Special:Search/{{query}}',
     name: 'Wikipedia',
+    encode: true
   } as SearchSetting],
   useIframe: true,
 };
@@ -91,6 +94,21 @@ export class SOISettingTab extends PluginSettingTab {
                   });
             }).setName('Name')
             .setDesc('Name of the search. Click the cross to delete the search.');
+            new Setting(div)
+            .setName('Encode')
+            .setDesc('If set to true, this will encode searches. ' +
+                  'Otherwise, it will not encode it.')
+            .addToggle((toggle) => {
+             
+              toggle.setValue(search.encode)
+                  .onChange((new_value) => {
+                    const index = plugin.settings.searches.indexOf(search);
+                    if (index > -1) {
+                      search.encode = new_value;
+                      plugin.saveSettings();
+                    }
+                  });
+            });
         new Setting(div)
             .addTextArea((text) => {
               const t = text.setPlaceholder('Search query')
@@ -108,6 +126,18 @@ export class SOISettingTab extends PluginSettingTab {
             .setDesc('URL to open when executing the search. ' +
                 'Use {{query}} to refer to the query, which is either the selected text, or the title of a note.');
         new Setting(div).addText((text) => {
+          return text.setPlaceholder('')
+              .setValue(search.tags.join(', '))
+              .onChange((newValue) => {
+                const index = plugin.settings.searches.indexOf(search);
+                if (index > -1) {
+                  search.tags = parseTags(newValue);
+                  plugin.saveSettings();
+                }
+              });
+        }).setName('Tags')
+            .setDesc('Only add search to notes with these comma-separated tags. Leave empty to use all tags.');
+         new Setting(div).addText((text) => {
           return text.setPlaceholder('')
               .setValue(search.tags.join(', '))
               .onChange((newValue) => {

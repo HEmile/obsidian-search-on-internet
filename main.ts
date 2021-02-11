@@ -105,7 +105,10 @@ export default class SearchOnInternetPlugin extends Plugin {
     }
 
     async openSearch(search: SearchSetting, query: string, activeView: SearchView=null) {
-      const encodedQuery = encodeURIComponent(query);
+      let encodedQuery =query;
+      if(search.encode){
+      encodedQuery= encodeURIComponent(query);
+      }
       const url = search.query.replace('{{title}}', encodedQuery)
           .replace('{{query}}', encodedQuery);
       console.log(`SOI: Opening URL ${url}`);
