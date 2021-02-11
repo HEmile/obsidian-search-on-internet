@@ -1,5 +1,5 @@
 import {EventRef, MarkdownPreviewView, MarkdownView, Menu, Plugin, TFile} from 'obsidian';
-import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting} from './settings';
+import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting, DEFAULT_QUERY} from './settings';
 import open from 'open';
 import {SearchModal} from './modal';
 import {SearchView} from './view';
@@ -7,6 +7,7 @@ import {SearchView} from './view';
 
 export default class SearchOnInternetPlugin extends Plugin {
     settings: SOISettings;
+    onDom: any;
 
     async onload() {
       console.log('loading search-on-internet');
@@ -53,26 +54,22 @@ export default class SearchOnInternetPlugin extends Plugin {
         },
       });
 
-
       // Changing the context menu is a bit problematic:
       // Obsidian sometimes uses its own context menu, eg when right-clicking
       // on internal link. But other times, it's a context menu that
       // cannot really be edited easily. It would be nice if Obsidian
       // provided its own context menu everywhere to hook into.
-
       this.registerCodeMirror((cm) => {
         // @ts-ignore
         cm.resetSelectionOnContextMenu=false;
         cm.on('contextmenu', (editor, event)=>{
-          console.log(editor);
-          console.log(event);
-          this.handleContext(event);
+          plugin.handleContext(event);
         });
       });
-      document.on('contextmenu', '.markdown-preview-view', (event) => {
-        console.log(event);
-        this.handleContext(event);
-      });
+      this.onDom = function(event: MouseEvent) {
+        plugin.handleContext(event);
+      };
+      document.on('contextmenu', '.markdown-preview-view', this.onDom);
     }
 
     getSelectedText(): string {
@@ -87,25 +84,57 @@ export default class SearchOnInternetPlugin extends Plugin {
     }
 
     async handleContext(e: MouseEvent, activeView: SearchView=null) {
+      const fileMenu = new Menu();
+      let onUrl = false;
+      // @ts-ignore
+      fileMenu.dom.classList.add('soi-file-menu');
+      if (e.target) {
+        // @ts-ignore
+        const classes: DOMTokenList = e.target.classList;
+        // @ts-ignore
+        if (classes.contains('cm-url') || classes.contains('external-link')) {
+          // @ts-ignore
+          const url = classes.contains('cm-url') ? e.target.textContent : e.target.href;
+          onUrl = true;
+          fileMenu.addItem((item) => {
+            item.setTitle(`Open in iframe`).setIcon('link')
+                .onClick((evt) => {
+                  this.openSearch({
+                    tags: [],
+                    query: '{{query}}',
+                    name: '',
+                    encode: false,
+                  // @ts-ignore
+                  }, url, activeView);
+                });
+          });
+        }
+      }
       const query = this.getSelectedText();
-      if (query === null || query === '') {
+      const hasSelection = !(query === null || query === '');
+      if (!onUrl && !hasSelection) {
         return;
       }
-      const fileMenu = new Menu();
-      for (const setting of this.settings.searches) {
-        fileMenu.addItem((item) => {
-          item.setTitle(`Search ${setting.name}`).setIcon('search')
-              .onClick((evt) => {
-                this.openSearch(setting, query, activeView);
-              });
-        });
+      if (hasSelection) {
+        console.log(query);
+        for (const setting of this.settings.searches) {
+          fileMenu.addItem((item) => {
+            item.setTitle(`Search ${setting.name}`).setIcon('search')
+                .onClick((evt) => {
+                  this.openSearch(setting, query, activeView);
+                });
+          });
+        }
       }
       fileMenu.showAtPosition({x: e.x, y: e.y});
       e.preventDefault();
     }
 
     async openSearch(search: SearchSetting, query: string, activeView: SearchView=null) {
-      const encodedQuery = encodeURIComponent(query);
+      let encodedQuery =query;
+      if (search.encode) {
+        encodedQuery= encodeURIComponent(query);
+      }
       const url = search.query.replace('{{title}}', encodedQuery)
           .replace('{{query}}', encodedQuery);
       console.log(`SOI: Opening URL ${url}`);
@@ -126,11 +155,15 @@ export default class SearchOnInternetPlugin extends Plugin {
 
     onunload() {
       console.log('unloading search-on-internet');
+      document.off('contextmenu', '.markdown-preview-view', this.onDom);
     }
 
     async loadSettings() {
       const loadedSettings = await this.loadData() as any;
       if (loadedSettings && loadedSettings.hasOwnProperty('searches')) {
+        loadedSettings.searches = Array.from(
+            loadedSettings.searches.map(
+                (s: SearchSetting) => Object.assign({}, DEFAULT_QUERY, s)));
         this.settings = loadedSettings;
       } else {
         this.settings = DEFAULT_SETTING;
