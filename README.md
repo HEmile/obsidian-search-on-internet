@@ -50,6 +50,8 @@ For each website, fill in the following three fields:
   
 You can also disable the iframe search and open the search in your browser. 
   
+### Contributors
+- [nhaouari](https://github.com/nhaouari) added the setting not to encode, and started work on opening external links in iframes.
 
 ### Credits
 Settings code is mainly taken from the [Templater plugin](https://github.com/SilentVoid13/Templater) by [SilentVoid13](https://github.com/SilentVoid13)
