@@ -8,6 +8,7 @@ import {SearchView} from './view';
 export default class SearchOnInternetPlugin extends Plugin {
     settings: SOISettings;
     onDom: any;
+    onDomSettings: any;
 
     async onload() {
       console.log('loading search-on-internet');
@@ -69,7 +70,8 @@ export default class SearchOnInternetPlugin extends Plugin {
       this.onDom = function(event: MouseEvent) {
         plugin.handleContext(event);
       };
-      document.on('contextmenu', '.markdown-preview-view', this.onDom);
+      this.onDomSettings = {};
+      document.on('contextmenu', '.markdown-preview-view', this.onDom, this.onDomSettings);
     }
 
     getSelectedText(): string {
@@ -155,7 +157,7 @@ export default class SearchOnInternetPlugin extends Plugin {
 
     onunload() {
       console.log('unloading search-on-internet');
-      document.off('contextmenu', '.markdown-preview-view', this.onDom);
+      document.off('contextmenu', '.markdown-preview-view', this.onDom, this.onDomSettings);
     }
 
     async loadSettings() {
