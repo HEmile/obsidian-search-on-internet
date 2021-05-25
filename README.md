@@ -14,6 +14,7 @@
             alt="chat on Discord" width="120"></a>
 </p>
 
+Warning: The right-click menu is currently broken in the latest Obsidian release, so this plugin will not work as expected!
 
 ## Search on Internet
 Adds the option to search selected text on external websites, like Google and Wikipedia. 
