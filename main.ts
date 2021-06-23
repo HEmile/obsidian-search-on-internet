@@ -1,4 +1,4 @@
-import {EventRef, MarkdownPreviewView, MarkdownView, Menu, Plugin, TFile} from 'obsidian';
+import {Editor, EventRef, MarkdownPreviewView, MarkdownView, Menu, MenuItem, Notice, Plugin, TFile} from 'obsidian';
 import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting, DEFAULT_QUERY} from './settings';
 import open from 'open';
 import {SearchModal} from './modal';
@@ -18,7 +18,7 @@ export default class SearchOnInternetPlugin extends Plugin {
       this.addSettingTab(new SOISettingTab(this.app, this));
       const plugin = this;
       this.registerEvent(
-          this.app.workspace.on('file-menu', (menu, file: TFile, source:string) => {
+          this.app.workspace.on('file-menu', (menu, file: TFile, source: string) => {
             if (file === null) {
               return;
             }
@@ -26,7 +26,7 @@ export default class SearchOnInternetPlugin extends Plugin {
                 ?.tags?.map((t) => t.tag);
             this.settings.searches.forEach((search) => {
               if (search.tags.length === 0 ||
-              fileTags?.some((t) => search.tags.contains(t))) {
+                        fileTags?.some((t) => search.tags.contains(t))) {
                 menu.addItem((item) => {
                   item.setTitle(`Search ${search.name}`).setIcon('search')
                       .onClick((evt) => {
@@ -55,23 +55,51 @@ export default class SearchOnInternetPlugin extends Plugin {
         },
       });
 
-      // Changing the context menu is a bit problematic:
-      // Obsidian sometimes uses its own context menu, eg when right-clicking
-      // on internal link. But other times, it's a context menu that
-      // cannot really be edited easily. It would be nice if Obsidian
-      // provided its own context menu everywhere to hook into.
-      this.registerCodeMirror((cm) => {
-        // @ts-ignore
-        cm.resetSelectionOnContextMenu=false;
-        cm.on('contextmenu', (editor, event)=>{
-          plugin.handleContext(event);
-        });
-      });
+      // Preview mode
       this.onDom = function(event: MouseEvent) {
-        plugin.handleContext(event);
+        const fileMenu = new Menu(plugin.app);
+        // @ts-ignore
+        fileMenu.dom.classList.add('soi-file-menu');
+        // Functionality: Open external link in Iframe.
+        let emptyMenu = true;
+        if (event.target) {
+          // @ts-ignore
+          const classes: DOMTokenList = event.target.classList;
+          // @ts-ignore
+          if (classes.contains('cm-url') || classes.contains('external-link')) {
+            // @ts-ignore
+            const url = classes.contains('cm-url') ? event.target.textContent : event.target.href;
+
+            fileMenu.addItem((item: MenuItem) => {
+              item.setIcon('search').setTitle('Open in IFrame').onClick(() => {
+                this.openSearch({
+                  tags: [],
+                  query: '{{query}}',
+                  name: '',
+                  encode: false,
+                }, url, null);
+              });
+            });
+            emptyMenu = false;
+          }
+        }
+        emptyMenu = emptyMenu && !plugin.handleContext(fileMenu);
+        if (!emptyMenu) {
+          fileMenu.showAtPosition({x: event.x, y: event.y});
+          event.preventDefault();
+        }
       };
       this.onDomSettings = {};
       document.on('contextmenu', '.markdown-preview-view', this.onDom, this.onDomSettings);
+
+
+      // Remove this ignore when the obsidian package is updated on npm
+      // Editor mode
+      // @ts-ignore
+      this.registerEvent(this.app.workspace.on('editor-menu',
+          (menu: Menu, editor: Editor, view: MarkdownView) => {
+            this.handleContext(menu );
+          }));
     }
 
     getSelectedText(): string {
@@ -85,55 +113,26 @@ export default class SearchOnInternetPlugin extends Plugin {
       return null;
     }
 
-    async handleContext(e: MouseEvent, activeView: SearchView=null) {
-      const fileMenu = new Menu();
-      let onUrl = false;
-      // @ts-ignore
-      fileMenu.dom.classList.add('soi-file-menu');
-      if (e.target) {
-        // @ts-ignore
-        const classes: DOMTokenList = e.target.classList;
-        // @ts-ignore
-        if (classes.contains('cm-url') || classes.contains('external-link')) {
-          // @ts-ignore
-          const url = classes.contains('cm-url') ? e.target.textContent : e.target.href;
-          onUrl = true;
-          fileMenu.addItem((item) => {
-            item.setTitle(`Open in iframe`).setIcon('link')
-                .onClick((evt) => {
-                  this.openSearch({
-                    tags: [],
-                    query: '{{query}}',
-                    name: '',
-                    encode: false,
-                  // @ts-ignore
-                  }, url, activeView);
-                });
-          });
-        }
-      }
+    handleContext(menu: Menu): boolean {
       const query = this.getSelectedText();
-      const hasSelection = !(query === null || query === '');
-      if (!onUrl && !hasSelection) {
-        return;
+      const hasSelection = !(query === null || query.trim() === '');
+      console.log(query);
+      console.log(hasSelection);
+      if (!hasSelection) {
+        return false;
       }
-      if (hasSelection) {
-        console.log(query);
-        for (const setting of this.settings.searches) {
-          fileMenu.addItem((item) => {
-            item.setTitle(`Search ${setting.name}`).setIcon('search')
-                .onClick((evt) => {
-                  this.openSearch(setting, query, activeView);
-                });
-          });
-        }
+      for (const searchsetting of this.settings.searches) {
+        menu.addItem((item: MenuItem) => {
+          item.setTitle('Search on ' + searchsetting.name)
+              .setIcon('search')
+              .onClick((evt: MouseEvent) => this.openSearch(searchsetting, query, null));
+        });
       }
-      fileMenu.showAtPosition({x: e.x, y: e.y});
-      e.preventDefault();
+      return true;
     }
 
     async openSearch(search: SearchSetting, query: string, activeView: SearchView=null) {
-      let encodedQuery =query;
+      let encodedQuery = query;
       if (search.encode) {
         encodedQuery= encodeURIComponent(query);
       }
