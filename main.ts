@@ -72,7 +72,7 @@ export default class SearchOnInternetPlugin extends Plugin {
 
             fileMenu.addItem((item: MenuItem) => {
               item.setIcon('search').setTitle('Open in IFrame').onClick(() => {
-                this.openSearch({
+                plugin.openSearch({
                   tags: [],
                   query: '{{query}}',
                   name: '',
@@ -116,8 +116,6 @@ export default class SearchOnInternetPlugin extends Plugin {
     handleContext(menu: Menu): boolean {
       const query = this.getSelectedText();
       const hasSelection = !(query === null || query.trim() === '');
-      console.log(query);
-      console.log(hasSelection);
       if (!hasSelection) {
         return false;
       }
