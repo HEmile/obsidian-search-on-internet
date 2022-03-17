@@ -1,9 +1,30 @@
-import {Editor, EventRef, MarkdownPreviewView, MarkdownView, Menu, MenuItem, Notice, Plugin, TFile} from 'obsidian';
+import {
+  Editor,
+  EventRef,
+  MarkdownPreviewView,
+  MarkdownView,
+  Menu,
+  MenuItem,
+  Notice,
+  Plugin,
+  TFile, View,
+  WorkspaceLeaf,
+} from 'obsidian';
 import {SOISettingTab, SOISettings, DEFAULT_SETTING, SearchSetting, DEFAULT_QUERY} from './settings';
 import open from 'open';
 import {SearchModal} from './modal';
 import {SearchView} from './view';
 
+// declare module 'obsidian' {
+//   interface App {
+//     plugins: {
+//       enabledPlugins: Set<string>;
+//       plugins: {
+//         [id: string]: any;
+//       };
+//     };
+//   }
+// }
 
 export default class SearchOnInternetPlugin extends Plugin {
     settings: SOISettings;
@@ -142,10 +163,12 @@ export default class SearchOnInternetPlugin extends Plugin {
           activeView.frame.setAttr('src', url);
           activeView.url = url;
         } else {
-          const leaf = this.app.workspace.getLeaf(!(this.app.workspace.activeLeaf.view.getViewType() === 'empty'));
+          // @ts-ignore
+          const leaf = this.settings.usePopover ? await this.app.plugins.plugins['obsidian-hover-editor'].spawnPopover() : this.app.workspace.getLeaf(!(this.app.workspace.activeLeaf.view.getViewType() === 'empty'));
+
           // const leaf = this.app.workspace.splitActiveLeaf(this.settings.splitDirection);
           const view = new SearchView(this, leaf, query, search.name, url);
-          await leaf.open(view);
+          await leaf?.open(view);
         }
       } else {
         await open(url);

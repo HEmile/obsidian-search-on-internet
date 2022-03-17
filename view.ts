@@ -20,7 +20,7 @@ export class SearchView extends ItemView {
     async onOpen() {
       this.frame = document.createElement('iframe');
       this.frame.addClass(`soi-site`);
-      this.frame.setAttr('style', 'height: 100%; width:100%');
+      this.frame.setAttr('style', 'height: 100vh; width:100vh');
       this.frame.setAttr('src', this.url);
       this.frame.setAttr('tabindex', '0');
       this.containerEl.children[1].appendChild(this.frame);
