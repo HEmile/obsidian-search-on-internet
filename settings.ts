@@ -11,6 +11,7 @@ export interface SearchSetting {
 export interface SOISettings {
     searches: SearchSetting[];
     useIframe: boolean;
+    usePopover: boolean;
 }
 
 export const DEFAULT_QUERY: SearchSetting = {
@@ -33,6 +34,7 @@ export const DEFAULT_SETTING: SOISettings = {
     encode: true,
   } as SearchSetting],
   useIframe: true,
+  usePopover: false,
 };
 
 const parseTags = function(inputs: string): string[] {
@@ -68,6 +70,18 @@ export class SOISettingTab extends PluginSettingTab {
                   this.plugin.saveData(this.plugin.settings);
                 });
           });
+
+      new Setting(containerEl)
+        .setName('[Experimental] Open in popover')
+        .setDesc('If set to true, this will open your searches in an iframe and it locals on a popover within Obsidian. ' +
+          'You should install Hover Editor first to make this work.')
+        .addToggle((toggle) => {
+          toggle.setValue(this.plugin.settings.usePopover)
+            .onChange((value) => {
+              this.plugin.settings.usePopover = value;
+              this.plugin.saveData(this.plugin.settings);
+            });
+        });
 
       // Code mostly taken from https://github.com/SilentVoid13/Templater/blob/master/src/settings.ts
       plugin.settings.searches.forEach((search) => {
