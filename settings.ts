@@ -74,7 +74,7 @@ export class SOISettingTab extends PluginSettingTab {
       new Setting(containerEl)
         .setName('[Experimental] Open in popover')
         .setDesc('If set to true, this will open your searches in an iframe and it locals on a popover within Obsidian. ' +
-          'You should install Hover editor first to make this work.')
+          'You should install Hover Editor first to make this work.')
         .addToggle((toggle) => {
           toggle.setValue(this.plugin.settings.usePopover)
             .onChange((value) => {
